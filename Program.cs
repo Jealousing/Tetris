@@ -51,7 +51,12 @@ namespace Tetris_SeoDongju
                     {3,0,0,0,0,0,0,0,0,0,0,3},
                     {3,3,3,3,3,3,3,3,3,3,3,3}
                 };
-
+        private int count;
+        public int Count
+        {
+            get { return count; }
+            set { count = value; }
+        }
         void DrawShip()
         {
             Console.SetCursorPosition(m_PosX*2, m_PosY);
@@ -93,6 +98,7 @@ namespace Tetris_SeoDongju
             }
             BGDraw();
             DrawShip();
+            DeleteLine();
             GameOver();
         }
 
@@ -114,6 +120,28 @@ namespace Tetris_SeoDongju
             }
         }
 
+        void DeleteLine()
+        {
+            for (int i = 0; i <T_Helight;i++)
+            {
+                for(int j=0;j<T_Width;j++)
+                {
+                    if (TetrisBoard[i,j]==2)
+                    {
+                        Count++;
+                        if(Count == 10)
+                        {
+                            for(int o=1;o<T_Width-1;o++)
+                            {
+                                TetrisBoard[i, o] = 0;
+                            }
+                            Count = 0;
+                        }
+                    }
+                }
+                Count = 0;
+            }
+        }
         void GameOver()
         {
             for (int i=0;i<T_Width;i++)
