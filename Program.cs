@@ -57,6 +57,12 @@ namespace Tetris_SeoDongju
             get { return count; }
             set { count = value; }
         }
+        private int Deletecount;
+        public int DeleteCount
+        {
+            get { return Deletecount; }
+            set { Deletecount = value; }
+        }
         void DrawShip()
         {
             Console.SetCursorPosition(m_PosX*2, m_PosY);
@@ -100,6 +106,8 @@ namespace Tetris_SeoDongju
             DrawShip();
             DeleteLine();
             GameOver();
+            Console.SetCursorPosition(30, 10);
+            Console.WriteLine("삭제된 줄의수 :"+DeleteCount);
         }
 
         void BGDraw()
@@ -129,7 +137,7 @@ namespace Tetris_SeoDongju
                     TetrisBoard[i, j] = TetrisBoard[i - 1, j];
                 }
             }
-
+            DeleteCount++;
         }
 
         void DeleteLine()
