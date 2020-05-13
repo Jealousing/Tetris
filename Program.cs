@@ -120,6 +120,18 @@ namespace Tetris_SeoDongju
             }
         }
 
+        void DownLine(int Line)
+        {
+            for(int i=Line;i>1;i--)
+            {
+                for(int j=1;j<T_Width;j++)
+                {
+                    TetrisBoard[i, j] = TetrisBoard[i - 1, j];
+                }
+            }
+
+        }
+
         void DeleteLine()
         {
             for (int i = 0; i <T_Helight;i++)
@@ -135,6 +147,7 @@ namespace Tetris_SeoDongju
                             {
                                 TetrisBoard[i, o] = 0;
                             }
+                            DownLine(i);
                             Count = 0;
                         }
                     }
