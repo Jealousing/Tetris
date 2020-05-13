@@ -25,7 +25,7 @@ namespace Tetris_SeoDongju
         protected int T_Width = 12;
         protected int T_Helight = 22;
         public int m_PosX = 5;
-        public int m_PosY = 1;
+        public int m_PosY = 0;
         public int[,] TetrisBoard = new int[22, 12]
                 {
                     {3,3,3,3,3,3,3,3,3,3,3,3},
@@ -52,7 +52,7 @@ namespace Tetris_SeoDongju
                     {3,3,3,3,3,3,3,3,3,3,3,3}
                 };
 
-        public void DrawShip()
+        void DrawShip()
         {
             Console.SetCursorPosition(m_PosX*2, m_PosY);
             Console.Write("□");//위에 어떻게넣지?
@@ -61,7 +61,8 @@ namespace Tetris_SeoDongju
             if(TetrisBoard[m_PosY, m_PosX] ==2|| TetrisBoard[m_PosY, m_PosX] == 3)
             {
                 TetrisBoard[m_PosY-1, m_PosX] =2;
-                m_PosY = 2;
+                m_PosX = 5;
+                m_PosY = 0;
             }
         }
 
@@ -72,7 +73,9 @@ namespace Tetris_SeoDongju
                 ConsoleKeyInfo info = Console.ReadKey();//블러킹
                 if (info.Key == ConsoleKey.D || info.Key == ConsoleKey.RightArrow)
                 {
-                    m_PosX ++;
+                    m_PosX++;
+                    if (TetrisBoard[m_PosY, m_PosX] == 2)
+                    m_PosX--;
 
                     if (m_PosX > 10)
                         m_PosX = 10;
@@ -80,6 +83,8 @@ namespace Tetris_SeoDongju
                 if (info.Key == ConsoleKey.A || info.Key == ConsoleKey.LeftArrow)
                 {
                     m_PosX --;
+                    if (TetrisBoard[m_PosY, m_PosX] == 2)
+                        m_PosX++;
 
                     if (m_PosX < 1)
                         m_PosX = 1;
@@ -88,9 +93,10 @@ namespace Tetris_SeoDongju
             }
             BGDraw();
             DrawShip();
+            GameOver();
         }
 
-        public void BGDraw()
+        void BGDraw()
         {
             Console.SetCursorPosition(0, 0);
             for(int i=0;i<T_Helight;i++)
@@ -108,6 +114,18 @@ namespace Tetris_SeoDongju
             }
         }
 
+        void GameOver()
+        {
+            for (int i=0;i<T_Width;i++)
+            {
+                if (2== TetrisBoard[0, i])
+                {
+                    Environment.Exit(0);
+                }
+            }
+            
+        }
+
     }
     class Mainclass
     {
@@ -116,7 +134,7 @@ namespace Tetris_SeoDongju
             Game Tetris = new Game();
             while (true)
             {
-                Thread.Sleep(300);
+                Thread.Sleep(100);
                 Console.Clear();
 
                 Tetris.Draw();
