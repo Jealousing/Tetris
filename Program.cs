@@ -16,7 +16,10 @@ GitHub 주소: https://github.com/Jealousing/Tetris
 도형 모양 7개, 방향 4개 = 28가지
 판 크기 10x20
 
+    현재 수정해야되는거 : 블럭통과현상, 다른도형적용 , 
+
 */
+
 
 namespace Tetris_SeoDongju
 {
@@ -29,6 +32,11 @@ namespace Tetris_SeoDongju
         //시작 좌표
         public int m_PosX = 5;
         public int m_PosY = 0;
+        //게임속도
+        public int speed = 300;
+        //
+        public int pick=0, way=0;
+        private int onoff = 1;
         //테트리스 판
         public int[,] TetrisBoard = new int[22, 12]// 내부판크기 10x20
                 {
@@ -57,7 +65,7 @@ namespace Tetris_SeoDongju
                 };//테트리스 판
 
         //도형만들기
-        static public int[,,,] TetrisBlock= new int[7, 4, 4, 4]
+        static public int[,,,] TetrisBlock = new int[7, 4, 4, 4]
         {
             {//I Block
                 {
@@ -262,29 +270,33 @@ namespace Tetris_SeoDongju
             set { Deletecount = value; }
         }
 
-        void BlockDraw()
+        void BlockDraw(int blocktype, int way)
         {
-            for (int i=3;i>=0;i--)
+
+            for (int i = 3; i >= 0; i--)
             {
-                for(int j=3;j>=0;j--)
+                for (int j = 3; j >= 0; j--)
                 {
                     if (TetrisBlock[0, 0, i, j] == 0)
                     {
-                        Console.SetCursorPosition((m_PosX+j) * 2-(j*2), m_PosY+i);
+                        Console.SetCursorPosition((m_PosX + j) * 2 - (j * 2), m_PosY + i);
                         Console.Write("");
                     }
                     if (TetrisBlock[0, 0, i, j] == 1)
                     {
-                        if(TetrisBoard[m_PosY+i, m_PosX] == 2 || TetrisBoard[m_PosY+i, m_PosX] == 3)
-                        {
-                            for(int o=0;o<=i;o++)
+                        if (TetrisBoard[m_PosY + i, m_PosX] == 2 || TetrisBoard[m_PosY + i, m_PosX] == 3)
+                        {//밑에 좌표에 블럭이있으면 그대로 저장
+                            for (int o = i; o >=0; o--)
                             {
-                                if(TetrisBoard[m_PosY+i-o-1,m_PosX]!=4)
+                                if (m_PosY + o - 1 <= 0)//저장되는 좌표가 0보다 작아질경우 겜오버! 
                                 {
-                                    TetrisBoard[m_PosY + o - 1, m_PosX] = 2;
+                                    TetrisBoard[0, m_PosX] = 2;
+                                    Console.Clear();
+                                    BGDraw();
+                                    GameOver();
                                 }
+                                else TetrisBoard[m_PosY + o - 1, m_PosX] = 2;
                                 
-                                GameOver();
                             }
                             m_PosX = 5;
                             m_PosY = 0;
@@ -300,17 +312,44 @@ namespace Tetris_SeoDongju
             }
         }
 
-        void BlockSave(int y)
+        int PickBlock()
         {
+            Random num = new Random();
+            int pick = num.Next(0, 7);
+            return pick;
         }
-
+        int PickWay()
+        {
+            if (Console.KeyAvailable)
+            {
+                ConsoleKeyInfo info = Console.ReadKey();
+                if (info.Key == ConsoleKey.Z)
+                {
+                    way++;
+                    if (way == 4)
+                        way = 0;
+                    return way;
+                }
+                else return way;
+            }
+            return 0;
+        }
         void DrawShip()//도형 내리기 더이상 못가면 저장.
         {
-            Console.SetCursorPosition(m_PosX*2, m_PosY);
-            BlockDraw();//Console.Write("□");
+            
+            if (onoff==1)
+            {
+                onoff = 0;
+                pick =PickBlock();
+                way = PickWay();
+
+            }
+            Console.SetCursorPosition(m_PosX * 2, m_PosY);
+            BlockDraw(pick,way);//Console.Write("□");
             if (TetrisBoard[m_PosY, m_PosX] != 2 || TetrisBoard[m_PosY, m_PosX] != 3)//블럭이 없으면 아래로 진행
-            m_PosY++;
+                m_PosY++;
         }
+        
         void Keybind()//키입력 받기
         {
             if (Console.KeyAvailable)
@@ -334,11 +373,18 @@ namespace Tetris_SeoDongju
                     if (m_PosX < 1)//맵안에서 활동
                         m_PosX = 1;
                 }
+                if(info.Key==ConsoleKey.Subtract)
+                {
+                    speed -= 50;
+                }
+                if (info.Key == ConsoleKey.Add)
+                {
+                    speed += 50;
+                }
                 if (info.Key == ConsoleKey.Escape)//esc입력받으면 종료
                 {
                     Environment.Exit(0);
                 }
-
             }
         }
 
@@ -351,7 +397,7 @@ namespace Tetris_SeoDongju
             GameOver();
             GameInfo();
         }
-        
+
         void GameInfo()//게임 정보 출력
         {
             Console.SetCursorPosition(30, 3);
@@ -360,6 +406,8 @@ namespace Tetris_SeoDongju
             Console.WriteLine("ESC:게임종료");
             Console.SetCursorPosition(30, 10);
             Console.WriteLine("삭제된 줄의수 :" + DeleteCount);
+            Console.SetCursorPosition(30, 8);
+            Console.WriteLine("게임속도1000=1초 :" + speed);
         }
 
 
@@ -367,9 +415,9 @@ namespace Tetris_SeoDongju
         void BGDraw()//배경그리기
         {
             Console.SetCursorPosition(0, 0);
-            for(int i=0;i<T_Helight;i++)
+            for (int i = 0; i < T_Helight; i++)
             {
-                for(int j=0;j<T_Width;j++)
+                for (int j = 0; j < T_Width; j++)
                 {
                     if (TetrisBoard[i, j] == 0)
                         Console.Write("  ");
@@ -386,9 +434,9 @@ namespace Tetris_SeoDongju
 
         void DownLine(int Line)//줄내리기
         {
-            for(int i=Line;i>1;i--)
+            for (int i = Line; i > 1; i--)
             {
-                for(int j=1;j<T_Width;j++)
+                for (int j = 1; j < T_Width; j++)
                 {
                     TetrisBoard[i, j] = TetrisBoard[i - 1, j];
                 }
@@ -398,16 +446,16 @@ namespace Tetris_SeoDongju
 
         void DeleteLine()//다채워진줄 삭제
         {
-            for (int i = 0; i <T_Helight;i++)
+            for (int i = 0; i < T_Helight; i++)
             {
-                for(int j=0;j<T_Width;j++)
+                for (int j = 0; j < T_Width; j++)
                 {
-                    if (TetrisBoard[i,j]==2)
+                    if (TetrisBoard[i, j] == 2)
                     {
                         Count++;
-                        if(Count == 10)
+                        if (Count == 10)
                         {
-                            for(int o=1;o<T_Width-1;o++)
+                            for (int o = 1; o < T_Width - 1; o++)
                             {
                                 TetrisBoard[i, o] = 0;
                             }
@@ -421,10 +469,16 @@ namespace Tetris_SeoDongju
         }
         void GameOver()//맨위에 블럭이생기면 게임오버
         {
-            for (int i=0;i<T_Width;i++)
+            for (int i = 0; i < T_Width; i++)
             {
-                if (2== TetrisBoard[0, i])
+                if (2 == TetrisBoard[0, i])
                 {
+                    for(int j=0; j<11;j++)
+                    {
+                        Console.SetCursorPosition(30, j+1);
+                        Console.WriteLine("게임패배");
+                    }
+                    Console.SetCursorPosition(50, 22);
                     Environment.Exit(0);
                 }
             }
@@ -440,7 +494,7 @@ namespace Tetris_SeoDongju
             Game Tetris = new Game();
             while (true)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(Tetris.speed);
                 Console.Clear();
                 Tetris.Draw();
             }
