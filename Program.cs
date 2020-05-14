@@ -33,14 +33,14 @@ namespace Tetris_SeoDongju
         public int m_PosX = 8;
         public int m_PosY = 0;
         //게임속도
-        public int speed = 300;
+        public int speed = 150;
         //
-        public int pick=0, way=0;
+        public int pick = 0, way = 0;
         public int onoff = 1;
         //테트리스 판
         public int[,] TetrisBoard = new int[22, 16]// 내부판크기 10x20
                 {
-                    {0,0,4,4,4,4,4,4,4,4,4,4,4,4,0,0},
+                    {0,0,3,0,0,0,0,0,0,0,0,0,0,3,0,0},
                     {0,0,3,0,0,0,0,0,0,0,0,0,0,3,0,0},
                     {0,0,3,0,0,0,0,0,0,0,0,0,0,3,0,0},
                     {0,0,3,0,0,0,0,0,0,0,0,0,0,3,0,0},
@@ -96,162 +96,164 @@ namespace Tetris_SeoDongju
 
             {//O Block
                 {
-                    {0,1,1,0 },
-                    {0,1,1,0 },
                     {0,0,0,0 },
-                    {0,0,0,0 }
+                    {0,0,0,0 },
+                    {0,1,1,0 },
+                    {0,1,1,0 }
+
                 },
                 {
-                    {0,1,1,0 },
-                    {0,1,1,0 },
                     {0,0,0,0 },
-                    {0,0,0,0 }
+                    {0,0,0,0 },
+                    {0,1,1,0 },
+                    {0,1,1,0 }
                 },
                 {
-                    {0,1,1,0 },
-                    {0,1,1,0 },
                     {0,0,0,0 },
-                    {0,0,0,0 }
+                    {0,0,0,0 },
+                    {0,1,1,0 },
+                    {0,1,1,0 }
                 },
                 {
-                    {0,1,1,0 },
-                    {0,1,1,0 },
                     {0,0,0,0 },
-                    {0,0,0,0 }
+                    {0,0,0,0 },
+                    {0,1,1,0 },
+                    {0,1,1,0 }
                 }
             },
 
             {//Z Block
                 {
+                    {0,0,0,0 },
                     {0,1,0,0 },
                     {1,1,0,0 },
-                    {1,0,0,0 },
-                    {0,0,0,0 }
+                    {1,0,0,0 }
                 },
                 {
-                    {1,1,0,0 },
-                    {0,1,1,0 },
                     {0,0,0,0 },
-                    {0,0,0,0 }
+                    {0,0,0,0 },
+                    {1,1,0,0 },
+                    {0,1,1,0 }
                 },
                 {
+                    {0,0,0,0 },
                     {0,1,0,0 },
                     {1,1,0,0 },
-                    {1,0,0,0 },
-                    {0,0,0,0 }
+                    {1,0,0,0 }
                 },
                 {
-                    {1,1,0,0 },
-                    {0,1,1,0 },
                     {0,0,0,0 },
-                    {0,0,0,0 }
+                    {0,0,0,0 },
+                    {1,1,0,0 },
+                    {0,1,1,0 }
                 }
             },
             {//S Block
                 {
+                    {0,0,0,0 },
                     {1,0,0,0 },
                     {1,1,0,0 },
-                    {0,1,0,0 },
-                    {0,0,0,0 }
+                    {0,1,0,0 }
                 },
                 {
-                    {0,1,1,0 },
-                    {1,1,0,0 },
                     {0,0,0,0 },
-                    {0,0,0,0 }
+                    {0,0,0,0 },
+                    {0,1,1,0 },
+                    {1,1,0,0 }
                 },
                 {
+                    {0,0,0,0 },
                     {1,0,0,0 },
                     {1,1,0,0 },
-                    {0,1,0,0 },
-                    {0,0,0,0 }
+                    {0,1,0,0 }
                 },
                 {
-                    {0,1,1,0 },
-                    {1,1,0,0 },
                     {0,0,0,0 },
-                    {0,0,0,0 }
+                    {0,0,0,0 },
+                    {0,1,1,0 },
+                    {1,1,0,0 }
                 }
             },
 
             {//J Block
                 {
-                    {1,0,0,0 },
-                    {1,1,1,0 },
                     {0,0,0,0 },
-                    {0,0,0,0 }
+                    {0,0,0,0 },
+                    {1,0,0,0 },
+                    {1,1,1,0 }
                 },
                 {
+                    {0,0,0,0 },
                     {1,1,0,0 },
                     {1,0,0,0 },
-                    {1,0,0,0 },
-                    {0,0,0,0 }
+                    {1,0,0,0 }
                 },
                 {
-                    {1,1,1,0 },
-                    {0,0,1,0 },
                     {0,0,0,0 },
-                    {0,0,0,0 }
+                    {0,0,0,0 },
+                    {1,1,1,0 },
+                    {0,0,1,0 }
                 },
                 {
+                    {0,0,0,0 },
                     {0,0,1,0 },
                     {0,0,1,0 },
-                    {0,1,1,0 },
-                    {0,0,0,0 }
+                    {0,1,1,0 }
                 }
             },
 
             {//L Block
                 {
+                    {0,0,0,0 },
+                    {0,0,0,0 },
                     {0,0,1,0 },
-                    {1,1,1,0 },
+                    {1,1,1,0 }
+                },
+                {
                     {0,0,0,0 },
-                    {0,0,0,0 }
+                    {1,0,0,0 },
+                    {1,0,0,0 },
+                    {1,1,0,0 }
                 },
                 {
-                    {1,0,0,0 },
-                    {1,0,0,0 },
-                    {1,1,0,0 },
-                    {0,0,0,0 }
-                },
-                {
-                    {1,1,1,0 },
-                    {1,0,0,0 },
                     {0,0,0,0 },
-                    {0,0,0,0 }
+                    {0,0,0,0 },
+                    {1,1,1,0 },
+                    {1,0,0,0 }
+
                 },
                 {
+                    {0,0,0,0 },
                     {0,1,1,0 },
                     {0,0,1,0 },
-                    {0,0,1,0 },
-                    {0,0,0,0 }
+                    {0,0,1,0 }
                 }
             },
 
             {//T Block
                 {
-                    {0,0,00,0 },
+                    {0,0,0,0 },
+                    {0,0,0,0 },
                     {1,1,1,0 },
-                    {0,1,0,0 },
-                    {0,0,0,0 }
+                    {0,1,0,0 }
                 },
                 {
+                    {0,0,0,0 },
                     {0,1,0,0 },
                     {1,1,0,0 },
-                    {0,1,0,0 },
-                    {0,0,0,0 }
+                    {0,1,0,0 }
                 },
                 {
-                    {0,1,0,0 },
-                    {1,1,1,0 },
                     {0,0,0,0 },
-                    {0,0,0,0 }
+                    {0,0,0,0 },
+                    {0,1,0,0 },
+                    {1,1,1,0 }
                 },
                 {
+                    {0,0,0,0 },
                     {0,1,0,0 },
                     {0,1,1,0 },
-                    {0,1,0,0 },
-                    {0,0,0,0 }
+                    {0,1,0,0 }
                 }
             }
 
@@ -270,67 +272,39 @@ namespace Tetris_SeoDongju
             set { Deletecount = value; }
         }
 
+        void BlockCheck()
+        {
+            TetrisBoard[m_PosY, m_PosX];
+        }
+
         void BlockDraw(int blocktype, int way)
         {
-
-            for (int i = 3; i >= 0; i--)
+            for(int i=0;i<=3;i++)
             {
-                for (int j = 3; j >= 0; j--)
+                for(int j=0;j<=3;j++)
                 {
-                    if (TetrisBlock[blocktype, 0, i, j] == 0)
-                    {
-                        Console.SetCursorPosition((m_PosX+1 ) * 2 - (j * 2), m_PosY + i);
-                        Console.Write("");
-                    }
-                    if (TetrisBlock[blocktype, 0, i, j] == 1)
-                    {
-                        if (TetrisBoard[m_PosY + i, m_PosX] == 2 || TetrisBoard[m_PosY + i, m_PosX] == 3)
-                        {//밑에 좌표에 블럭이있으면 그대로 저장
-                            for(int p=0;p<=j;p++)
-                            {
-                                for (int o = i; o >= 0; o--)
-                                {
-                                    if (m_PosY + o - 1 <= 0)//저장되는 좌표가 0보다 작아질경우 겜오버! 
-                                    {
-                                        TetrisBoard[0, m_PosX] = 2;
-                                        Console.Clear();
-                                        BGDraw();
-                                        GameOver();
-                                    }
-                                    else
-                                    {
-                                        if (TetrisBlock[blocktype, 0,o,p]==1)
-                                        TetrisBoard[m_PosY + o - 1, m_PosX+p-1 ] = 2;
-                                    }
-
-                                }
-                            }
-                           
-                            onoff = 1;
-                            if (onoff == 1)
-                            {
-                                pick = PickBlock();
-                            }
-                            m_PosX = 8;
-                            m_PosY = 0;
-                        }
-                        else
-                        {
-                            Console.SetCursorPosition((m_PosX+1+ blocktype) * 2 - (j * 2), m_PosY + i);
-                            Console.Write("□");
-                        }
-                    }
+                    TetrisBoard[i + m_PosY, j + m_PosX] = TetrisBlock[blocktype, way,i, j];
                 }
-                Console.WriteLine("");
+            }
+        }
+        void BlockDelete()
+        {
+            for (int i = 0; i <= 3; i++)
+            {
+                for (int j = 0; j <= 3; j++)
+                {
+                    if(m_PosY>=5)
+                    TetrisBoard[m_PosY - i-2, j + m_PosX] = 0;
+                }
             }
         }
 
         int PickBlock()
         {
-                onoff = 0;
-                Random num = new Random();
-                int pickblock = num.Next(0, 2);
-                return pickblock;
+            onoff = 0;
+            Random num = new Random();
+            int pickblock = num.Next(0, 7);
+            return pickblock;
         }
         int PickWay()
         {
@@ -350,13 +324,14 @@ namespace Tetris_SeoDongju
         }
         void DrawShip()//도형 내리기 더이상 못가면 저장.
         {
-                way = PickWay();
+            way = PickWay();
             Console.SetCursorPosition(m_PosX * 2, m_PosY);
-            BlockDraw(pick,way);//Console.Write("□");
+            BlockDraw(pick, way);//Console.Write("□");
             if (TetrisBoard[m_PosY, m_PosX] != 2 || TetrisBoard[m_PosY, m_PosX] != 3)//블럭이 없으면 아래로 진행
                 m_PosY++;
+            BlockDelete();
         }
-        
+
         void Keybind()//키입력 받기
         {
             if (Console.KeyAvailable)
@@ -380,7 +355,7 @@ namespace Tetris_SeoDongju
                     if (m_PosX < 3)//맵안에서 활동
                         m_PosX = 3;
                 }
-                if(info.Key==ConsoleKey.Subtract)
+                if (info.Key == ConsoleKey.Subtract)
                 {
                     speed -= 50;
                 }
@@ -438,6 +413,8 @@ namespace Tetris_SeoDongju
                         Console.Write("■");
                     if (TetrisBoard[i, j] == 2)
                         Console.Write("□");
+                    if (TetrisBoard[i, j] == 1)
+                        Console.Write("□");
                 }
                 Console.WriteLine();
             }
@@ -484,16 +461,16 @@ namespace Tetris_SeoDongju
             {
                 if (2 == TetrisBoard[0, i])
                 {
-                    for(int j=0; j<11;j++)
+                    for (int j = 0; j < 11; j++)
                     {
-                        Console.SetCursorPosition(30, j+1);
+                        Console.SetCursorPosition(30, j + 1);
                         Console.WriteLine("게임패배");
                     }
                     Console.SetCursorPosition(50, 22);
                     Environment.Exit(0);
                 }
             }
-            
+
         }
 
     }
