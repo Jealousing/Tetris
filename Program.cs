@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+
 /*
 Console 테트리스 
 2020-05-13 -> 2020-05-
@@ -28,7 +29,7 @@ namespace Tetris_SeoDongju
         //테트리스 판의 가로
         protected int T_Width = 16;
         //테트리스 판의 높이
-        protected int T_Helight = 21;
+        protected int T_Helight = 23;
         //중심 좌표
         int centerX = 6;
         //시작 좌표
@@ -36,14 +37,16 @@ namespace Tetris_SeoDongju
         public int m_PosY = 0;
         //게임속도
         public int speed = 150;
-        //
-        int[] nextBlock = new int [3]
+        bool MaxSpeed = false;
+        //블럭모양저장
+        int[] nextBlock = new int[3]
         { 0,0,0 };
-        public int pick = 0, way = 0;
         public int onoff = 1;
         //테트리스 판
-        public int[,] TetrisBoard = new int[21, 16]// 내부판크기 10x20
+        public int[,] TetrisBoard = new int[23, 16]// 내부판크기 10x20
                 {
+                    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                    {0,0,3,3,3,3,3,3,3,3,3,3,3,3,0,0},
                     {0,0,3,0,0,0,0,0,0,0,0,0,0,3,0,0},
                     {0,0,3,0,0,0,0,0,0,0,0,0,0,3,0,0},
                     {0,0,3,0,0,0,0,0,0,0,0,0,0,3,0,0},
@@ -80,8 +83,9 @@ namespace Tetris_SeoDongju
                 {
                     {0,0,0,0 },
                     {0,0,0,0 },
-                    {1,1,1,1 },
-                    {0,0,0,0 }
+                    {0,0,0,0 },
+                    {1,1,1,1 } 
+                    
                 },
                 {
                     {0,1,0,0 },
@@ -92,8 +96,9 @@ namespace Tetris_SeoDongju
                 {
                     {0,0,0,0 },
                     {0,0,0,0 },
-                    {1,1,1,1 },
-                    {0,0,0,0 }
+                    {0,0,0,0 },
+                    {1,1,1,1 }
+                    
                 }
             },
 
@@ -242,9 +247,9 @@ namespace Tetris_SeoDongju
                 },
                 {
                     {0,0,0,0 },
-                    {0,1,0,0 },
-                    {1,1,0,0 },
-                    {0,1,0,0 }
+                    {0,0,1,0 },
+                    {0,1,1,0 },
+                    {0,0,1,0 }
                 },
                 {
                     {0,0,0,0 },
@@ -268,6 +273,12 @@ namespace Tetris_SeoDongju
             get { return count; }
             set { count = value; }
         }
+        private int count2;
+        public int Count2 //체크카운트
+        {
+            get { return count2; }
+            set { count2 = value; }
+        }
         private int Deletecount;
         public int DeleteCount //삭제된 줄수 카운트
         {
@@ -275,58 +286,127 @@ namespace Tetris_SeoDongju
             set { Deletecount = value; }
         }
 
+        private int way;
+        public int Way
+        {
+            get { return way; }
+            set { way = value; }
+        }
+
 
         void BlockDraw(int blocktype, int way)
         {
-           
-
-
-            for (int i=0;i<=3;i++)
+            
+            for (int i = 0; i <= 3; i++)
             {
-                Console.SetCursorPosition(centerX*2+m_PosX, m_PosY+i);
-                for (int j=0;j<=3;j++)
+                for (int j = 0; j <= 3; j++)
                 {
                     if (TetrisBlock[blocktype, way, i, j] == 1)
                     {
-                            Console.SetCursorPosition(m_PosX + centerX*2 + j*2, m_PosY + i);
-                            Console.Write("□");
-                    }
-                        Console.WriteLine();
-                    //Console.Write( TetrisBlock[blocktype, way,i, j]);
-                }
-                
-            }
-            if (TetrisBoard[m_PosY + 4, m_PosX + centerX] == 2 || TetrisBoard[m_PosY + 4, m_PosX + centerX] == 3)
-            {//벽에 부딫히면
-                for (int i = 0; i <= 3; i++)
-                {
-                    for (int j = 0; j <= 3; j++)
-                    {
-                        if (TetrisBlock[blocktype, way, i, j] == 1)
-                        {
-                            TetrisBoard[m_PosY + i, m_PosX + centerX + j] = 2;
-                        }
+                        TetrisBoard[m_PosY + i, m_PosX + centerX + j] = 1;
                     }
                 }
-                onoff = 1;
-                nextBlock[1] = nextBlock[2];
-                m_PosY = 0;
-                m_PosX = 0;
             }
-            else if (m_PosY <= 15)
+            TopReDraw();
+        }
+        void BlockDown(int blocktype, int way)
+        {
+            
+            if (m_PosY <= 17)
             {
+                BlockDelete(blocktype, way);
                 m_PosY++;
             }
-            
-
-        }
-
-        void Blockstop(int blocktype, int way)
-        {
-            if(TetrisBlock[blocktype,way,m_PosY,m_PosX]==1&&TetrisBoard[m_PosY+5,m_PosX]==2)
+            BlockDraw(blocktype, way);
+            BlockCheck(blocktype, way);
+            if (m_PosY==18)
             {
+                BlockSave(blocktype, way);
+                ResetVariable();
             }
         }
+
+        void ResetVariable()
+        {
+            onoff = 1;
+            nextBlock[0] = nextBlock[1];
+            m_PosY = 0;
+            m_PosX = 0;
+            Count2 = 0;
+            way = 0;
+            
+        }
+        void TopReDraw()
+        {
+            for (int i = 2; i < T_Width - 2; i++)
+            {
+                TetrisBoard[1, i] = 3;
+            }
+        }
+
+        void BlockDelete(int blocktype, int way)
+        {
+            for (int i = 0; i <= 3; i++)
+            {
+                for (int j = 0; j <= 3; j++)
+                {
+                    if (TetrisBlock[blocktype, way, i, j] == 1)
+                    {
+                        TetrisBoard[m_PosY + i, m_PosX + centerX + j] = 0;
+
+                    }
+
+                }
+            }
+        }
+
+        void BlockSave(int blocktype, int way)
+        {
+            for (int i = 0; i <= 3; i++)
+            {
+                for (int j = 0; j <= 3; j++)
+                {
+                    if (TetrisBlock[blocktype, way, i, j] == 1)
+                    {
+                        TetrisBoard[m_PosY + i, m_PosX + centerX + j] = 2;
+
+                    }
+
+                }
+            }
+        }
+
+        void BlockCheck(int blocktype, int way)
+        {
+            for (int i=0;i<T_Helight;i++)
+            {
+                for(int j=0;j<T_Width;j++)
+                {
+                    if (TetrisBoard[i, j] == 1 &&TetrisBoard[i+1, j] == 2)
+                    {
+                        BlockSave(blocktype, way);
+                        ResetVariable();
+                    }
+                }
+            }
+            
+        }
+        int BlockCheckX(int blocktype, int way,int x)
+        {
+            for (int j = 0; j < T_Width; j++)
+            {
+                for (int i = 0; i < T_Helight; i++)
+                {
+                    if (TetrisBoard[i, j] == 1 && TetrisBoard[i , j+x] == 2)
+                    {
+                        return m_PosX += x;
+                    }
+                }
+            }
+            return m_PosY;
+
+        }
+
 
 
         int PickBlock()
@@ -336,85 +416,282 @@ namespace Tetris_SeoDongju
             int pickblock = num.Next(0, 7);
             return pickblock;
         }
-        int PickWay()
+
+       
+
+        void Keybind(int blocktype, int way)//키입력 받기
         {
             if (Console.KeyAvailable)
             {
                 ConsoleKeyInfo info = Console.ReadKey();
                 if (info.Key == ConsoleKey.Z)
                 {
-                    way++;
-                    if (way == 4)
-                        way = 0;
-                    return way;
-                }
-                else return way;
-            }
-            return 0;
-        }
-        void DrawShip()//도형 내리기 더이상 못가면 저장.
-        {
-            way = PickWay();
-            nextBlock[1] = PickBlock();
-            BlockDraw(nextBlock[0], way);//Console.Write("□");
-        }
+                    BlockDelete(blocktype, way);
+                    Way++;
+                    if (Way >= 4)
+                    {
+                        Way = 0;
+                    }
+                    BGDraw();
 
-        void Keybind()//키입력 받기
-        {
-            if (Console.KeyAvailable)
-            {
-                ConsoleKeyInfo info = Console.ReadKey();
+                }
+                if (info.Key == ConsoleKey.X)
+                {
+                    BlockDelete(blocktype, way);
+                    Way--;
+                    if (Way <= 0)
+                    {
+                        Way = 3;
+                    }
+                    BGDraw();
+
+                }
+                if (info.Key == ConsoleKey.Spacebar)
+                {
+                    if (MaxSpeed == true)
+                    {
+                        MaxSpeed = false;
+                        speed = 150;
+                    }
+                    else if (MaxSpeed == false)
+                    {
+                        MaxSpeed = true;
+                        speed = 1;
+                    }
+                }
+                
                 if (info.Key == ConsoleKey.D || info.Key == ConsoleKey.RightArrow)
                 {
-                    m_PosX ++;
-                    /*if (TetrisBoard[m_PosY, m_PosX + centerX] == 2|| TetrisBoard[m_PosY, m_PosX + centerX] == 3)//이동방향에 블럭이있으면 진행x
-                        m_PosX--;*/
-
-                    switch(nextBlock[0])
+                    BlockDelete(blocktype, way);
+                      
+                    m_PosX++;
+                    BlockCheckX(blocktype, way, +1);
+                    if (blocktype == 0)
                     {
-                        case 0:
-                        case 2:
-                        case 3:
-                            if (m_PosX > 2 + centerX)//맵안에서 활동
-                                m_PosX = 10;
-                            break;
-                        case 1:
-                        case 4:
-                        case 5:
-                        case 6:
-                            if (m_PosX > 0 + centerX)//맵안에서 활동
-                                m_PosX = 8;
-                            break;
+                        switch (way)
+                        {
+                            case 0:
+                            case 2:
+                                if (m_PosX > -1 + centerX)//맵안에서 활동
+                                    m_PosX = 5;
+                                break;
+                            case 1:
+                            case 3:
+                                if (m_PosX > -3 + centerX)//맵안에서 활동
+                                    m_PosX = 3;
+                                break;
+                        }
                     }
+                    else if (blocktype == 1)
+                    {
+                        switch (way)
+                        {
+                            case 0:
+                            case 1:
+                            case 2:
+                            case 3:
+                                if (m_PosX > -2 + centerX)//맵안에서 활동
+                                    m_PosX = 4;
+                                break;
+                            
+                        }
+                    }
+                    else if (blocktype == 2)
+                    {
+                        switch (way)
+                        {
+                            case 0:
+                            case 2:
+                                if (m_PosX > -1 + centerX)//맵안에서 활동
+                                    m_PosX = 5;
+                                break;
+                            case 1:
+                            case 3:
+                                if (m_PosX > -2 + centerX)//맵안에서 활동
+                                    m_PosX = 4;
+                                break;
+                        }
+                    }
+                    else if (blocktype == 3)
+                    {
+                        switch (way)
+                        {
+                            case 0:
+                            case 2:
+                                if (m_PosX > -1 + centerX)//맵안에서 활동
+                                    m_PosX = 5;
+                                break;
+                            case 1:
+                            case 3:
+                                if (m_PosX > -2 + centerX)//맵안에서 활동
+                                    m_PosX = 4;
+                                break;
+                        }
+                    }
+                    else if (blocktype == 4)
+                    {
+                        switch (way)
+                        {
+                            case 0:
+                            case 2:
+                            case 3:
+                                if (m_PosX > -2 + centerX)//맵안에서 활동
+                                    m_PosX = 4;
+                                break;
+                            case 1:
+                                if (m_PosX > -1 + centerX)//맵안에서 활동
+                                    m_PosX = 5;
+                                break;
+                            
+                        }
+                    }
+                    else if (blocktype == 5)
+                    {
+                        switch (way)
+                        {
+                            case 0:
+                            case 2:
+                            case 3:
+                                if (m_PosX > -2 + centerX)//맵안에서 활동
+                                    m_PosX = 4;
+                                break;
+                            case 1:
+                                if (m_PosX > -1 + centerX)//맵안에서 활동
+                                    m_PosX = 5;
+                                break;
+                        }
+                    }
+                    else if (blocktype == 6)
+                    {
+                        switch (way)
+                        {
+                            case 0:
+                            case 1:
+                            case 2:
+                            case 3:
+                                if (m_PosX > -2 + centerX)//맵안에서 활동
+                                    m_PosX = 4;
+                                break;
+                        }
+                    }
+                    BlockDraw(blocktype, way);
                 }
                 if (info.Key == ConsoleKey.A || info.Key == ConsoleKey.LeftArrow)
                 {
-                    m_PosX --;
-                    /* if (TetrisBoard[m_PosY, m_PosX+centerX] == 2||TetrisBoard[m_PosY, m_PosX + centerX] == 3)//이동방향에 블럭이있으면 진행x
-                         m_PosX++;*/
-                    switch (nextBlock[0])
-                    {
-                        case 0:
-                        case 1:
-                            if (m_PosX < -2 - centerX)//맵안에서 활동
-                                m_PosX = -8;
-                            break;
-                        case 2:
-                        case 3:
-                        case 4:
-                        case 5:
-                        case 6:
-                            if (m_PosX < 0 - centerX)//맵안에서 활동
-                                m_PosX = -6;
-                            break;
-                    }
+                    BlockDelete(blocktype, way);
+                    m_PosX--;
+                    BlockCheckX(blocktype, way, -1);
 
-                
+                    if (blocktype == 0)
+                    {
+                        switch(way)
+                        {
+                            case 0:
+                            case 2:
+                                if (m_PosX < 2 - centerX)//맵안에서 활동
+                                    m_PosX = -4;
+                                break;
+                            case 1:
+                            case 3:
+                                if (m_PosX < 3- centerX)//맵안에서 활동
+                                    m_PosX = -3;
+                                break;
+                        }
+                    }
+                    else if (blocktype == 1)
+                    {
+                        switch (way)
+                        {
+                            case 0:
+                            case 1:
+                            case 2:
+                            case 3:
+                                if (m_PosX < 2- centerX)//맵안에서 활동
+                                    m_PosX = -4;
+                                break;
+                        }
+                    }
+                    else if (blocktype == 2)
+                    {
+                        switch (way)
+                        {
+                            case 0:
+                            case 1:
+                            case 2:
+                            case 3:
+                                if (m_PosX < 3 - centerX)//맵안에서 활동
+                                    m_PosX = -3;
+                                break;
+                        }
+                    }
+                    else if (blocktype == 3)
+                    {
+                        switch (way)
+                        {
+                            case 0:
+                            case 1:
+                            case 2:
+                            case 3:
+                                if (m_PosX < 3 - centerX)//맵안에서 활동
+                                    m_PosX = -3;
+                                break;
+                        }
+                    }
+                    else if (blocktype == 4)
+                    {
+                        switch (way)
+                        {
+                            case 0:
+                            case 1:
+                            case 2:
+                                if (m_PosX < 4 - centerX)//맵안에서 활동
+                                    m_PosX = -3;
+                                break;
+                            case 3:
+                                if (m_PosX < 2 - centerX)//맵안에서 활동
+                                    m_PosX = -4;
+                                break;
+                        }
+                    }
+                    else if (blocktype == 5)
+                    {
+                        switch (way)
+                        {
+                            case 0:
+                            case 1:
+                            case 2:
+                                if (m_PosX < 3 - centerX)//맵안에서 활동
+                                    m_PosX = -3;
+                                break;
+                            case 3:
+                                if (m_PosX < 2 - centerX)//맵안에서 활동
+                                    m_PosX = -4;
+                                break;
+                        }
+                    }
+                    else if (blocktype == 6)
+                    {
+                        switch (way)
+                        {
+                            case 0:
+                            case 2:
+                                if (m_PosX < 3 - centerX)//맵안에서 활동
+                                    m_PosX = -3;
+                                break;
+                            case 1:
+                            case 3:
+                                if (m_PosX < 2 - centerX)//맵안에서 활동
+                                    m_PosX = -4;
+                                break;
+                        }
+                    }
+                    BlockDraw(blocktype, way);
+
                 }
 
                 if (info.Key == ConsoleKey.Subtract)
                 {
-                    speed -= 50;    
+                    speed -= 50;
                 }
                 if (info.Key == ConsoleKey.Add)
                 {
@@ -429,19 +706,29 @@ namespace Tetris_SeoDongju
 
         public void Draw()//그리기
         {
-            Keybind();
+            Keybind(nextBlock[0], Way);
             BGDraw();
-            DrawShip();
+            nextBlock[1] = PickBlock();
+            BlockDown(nextBlock[0], Way);
             DeleteLine();
             GameOver();
             GameInfo();
+            BGDraw();
         }
 
         void GameInfo()//게임 정보 출력
         {
+            Console.SetCursorPosition(30, 1);
+            Console.WriteLine("■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
+            Console.SetCursorPosition(30, 2);
+            Console.WriteLine("      ■    ■            ■    ■     ■   ■  ■  ");
             Console.SetCursorPosition(30, 3);
-            Console.WriteLine("게임정보");
+            Console.WriteLine("      ■    ■■■■■    ■    ■■■■    ■   ■■■■");
             Console.SetCursorPosition(30, 4);
+            Console.WriteLine("      ■    ■            ■    ■    ■    ■          ■");
+            Console.SetCursorPosition(30, 5);
+            Console.WriteLine("      ■    ■■■■■    ■    ■     ■ ■■■ ■■■■");
+            Console.SetCursorPosition(30, 8);
             Console.WriteLine("ESC:게임종료");
             Console.SetCursorPosition(30, 10);
             Console.WriteLine("삭제된 줄의수 :" + DeleteCount);
@@ -450,10 +737,10 @@ namespace Tetris_SeoDongju
             Console.SetCursorPosition(30, 12);
             Console.WriteLine("onoff 확인 :" + onoff);
             Console.SetCursorPosition(30, 14);
-            Console.WriteLine("block 확인 :" + PickBlock()); 
+            Console.WriteLine("block 확인 :" + PickBlock());
             Console.SetCursorPosition(30, 16);
             Console.Write("y좌표 x좌표 :" + m_PosY);
-            Console.WriteLine(" "+m_PosX + centerX);
+            Console.WriteLine(" " + m_PosX + centerX);
         }
 
 
@@ -468,13 +755,23 @@ namespace Tetris_SeoDongju
                     if (TetrisBoard[i, j] == 0)
                         Console.Write("  ");
                     if (TetrisBoard[i, j] == 3)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Black;
                         Console.Write("■");
-                    if (TetrisBoard[i, j] == 4)
-                        Console.Write("■");
+                    }
+                        
                     if (TetrisBoard[i, j] == 2)
-                        Console.Write("□");
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.Write("■");
+                    }
+                        
                     if (TetrisBoard[i, j] == 1)
-                        Console.Write("□");
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write("■");
+                    }
+                        
                 }
                 Console.WriteLine();
             }
@@ -482,9 +779,9 @@ namespace Tetris_SeoDongju
 
         void DownLine(int Line)//줄내리기
         {
-            for (int i = Line; i > 1; i--)
+            for (int i = Line; i > 2; i--)
             {
-                for (int j = 1; j < T_Width; j++)
+                for (int j = 1; j < T_Width-1; j++)
                 {
                     TetrisBoard[i, j] = TetrisBoard[i - 1, j];
                 }
@@ -494,7 +791,7 @@ namespace Tetris_SeoDongju
 
         void DeleteLine()//다채워진줄 삭제
         {
-            for (int i = 0; i < T_Helight; i++)
+            for (int i = 0; i < T_Helight ; i++)
             {
                 for (int j = 0; j < T_Width; j++)
                 {
@@ -503,7 +800,7 @@ namespace Tetris_SeoDongju
                         Count++;
                         if (Count == 10)
                         {
-                            for (int o = 1; o < T_Width - 1; o++)
+                            for (int o = 1; o < T_Width-1; o++)
                             {
                                 TetrisBoard[i, o] = 0;
                             }
@@ -519,7 +816,7 @@ namespace Tetris_SeoDongju
         {
             for (int i = 0; i < T_Width; i++)
             {
-                if (2 == TetrisBoard[0, i])
+                if (2 == TetrisBoard[1, i]|| 1 == TetrisBoard[1, i])
                 {
                     for (int j = 0; j < 11; j++)
                     {
@@ -538,6 +835,7 @@ namespace Tetris_SeoDongju
     {
         static void Main(string[] args)
         {
+            Console.BackgroundColor = ConsoleColor.White;
             //게임진행
             Game Tetris = new Game();
             while (true)
