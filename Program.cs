@@ -39,8 +39,8 @@ namespace Tetris_SeoDongju
         public int speed = 150;
         bool MaxSpeed = false;
         //블럭모양저장
-        int[] nextBlock = new int[3]
-        { 0,0,0 };
+        public int[] nextBlock = new int[4]
+        { 0,0,0,0 };
         public int onoff = 1;
         //테트리스 판
         public int[,] TetrisBoard = new int[23, 16]// 내부판크기 10x20
@@ -73,7 +73,7 @@ namespace Tetris_SeoDongju
         //도형만들기
         static public int[,,,] TetrisBlock = new int[7, 4, 4, 4]
         {
-            {//I Block
+            {//I Block 0I 1O 2Z 3S 4J 5L 6ㅗ
                 {
                     {0,1,0,0 },
                     {0,1,0,0 },
@@ -267,7 +267,7 @@ namespace Tetris_SeoDongju
 
         };
 
-        private int count;
+        private int count = 1;
         public int Count //체크카운트
         {
             get { return count; }
@@ -328,11 +328,11 @@ namespace Tetris_SeoDongju
 
         void ResetVariable()
         {
-            onoff = 1;
+            
             nextBlock[0] = nextBlock[1];
+            nextBlock[1] = nextBlock[2];
             m_PosY = 0;
             m_PosX = 0;
-            Count2 = 0;
             way = 0;
             
         }
@@ -374,6 +374,7 @@ namespace Tetris_SeoDongju
 
                 }
             }
+            onoff = 1;
         }
 
         void BlockCheck(int blocktype, int way)
@@ -409,12 +410,12 @@ namespace Tetris_SeoDongju
 
 
 
-        int PickBlock()
+        void PickBlock()
         {
-            onoff = 0;
             Random num = new Random();
             int pickblock = num.Next(0, 7);
-            return pickblock;
+            nextBlock[2]= pickblock;
+           
         }
 
        
@@ -446,7 +447,7 @@ namespace Tetris_SeoDongju
                     BGDraw();
 
                 }
-                if (info.Key == ConsoleKey.Spacebar)
+                if (info.Key == ConsoleKey.Spacebar||info.Key==ConsoleKey.DownArrow)
                 {
                     if (MaxSpeed == true)
                     {
@@ -706,41 +707,75 @@ namespace Tetris_SeoDongju
 
         public void Draw()//그리기
         {
+            PickBlock();
             Keybind(nextBlock[0], Way);
             BGDraw();
-            nextBlock[1] = PickBlock();
             BlockDown(nextBlock[0], Way);
             DeleteLine();
             GameOver();
             GameInfo();
             BGDraw();
+
         }
 
         void GameInfo()//게임 정보 출력
         {
-            Console.SetCursorPosition(30, 1);
-            Console.WriteLine("■■■■■■■■■■■■■■■■■■■■■■■■■■■■");
-            Console.SetCursorPosition(30, 2);
-            Console.WriteLine("      ■    ■            ■    ■     ■   ■  ■  ");
-            Console.SetCursorPosition(30, 3);
-            Console.WriteLine("      ■    ■■■■■    ■    ■■■■    ■   ■■■■");
-            Console.SetCursorPosition(30, 4);
-            Console.WriteLine("      ■    ■            ■    ■    ■    ■          ■");
-            Console.SetCursorPosition(30, 5);
-            Console.WriteLine("      ■    ■■■■■    ■    ■     ■ ■■■ ■■■■");
-            Console.SetCursorPosition(30, 8);
-            Console.WriteLine("ESC:게임종료");
-            Console.SetCursorPosition(30, 10);
-            Console.WriteLine("삭제된 줄의수 :" + DeleteCount);
-            Console.SetCursorPosition(30, 8);
-            Console.WriteLine("게임속도1000=1초 :" + speed);
-            Console.SetCursorPosition(30, 12);
-            Console.WriteLine("onoff 확인 :" + onoff);
-            Console.SetCursorPosition(30, 14);
-            Console.WriteLine("block 확인 :" + PickBlock());
-            Console.SetCursorPosition(30, 16);
-            Console.Write("y좌표 x좌표 :" + m_PosY);
-            Console.WriteLine(" " + m_PosX + centerX);
+            Console.SetCursorPosition(32, 1);
+            Console.WriteLine("  ■■■■■■■■■■■■■■■■■■■■■■■■■■■   제작시작일: 2020-05-13");
+            Console.SetCursorPosition(32, 2);
+            Console.WriteLine("      ■    ■            ■    ■     ■   ■  ■         최종수정일: 2020-05-16");
+            Console.SetCursorPosition(32, 3);
+            Console.WriteLine("      ■    ■■■■■    ■    ■■■■    ■   ■■■■  Github 주소: github.com/Jealousing/Tetris");
+            Console.SetCursorPosition(32, 4);
+            Console.WriteLine("      ■    ■            ■    ■    ■    ■          ■ ");
+            Console.SetCursorPosition(32, 5);
+            Console.WriteLine("      ■    ■■■■■    ■    ■     ■ ■■■ ■■■■  ");
+            Console.SetCursorPosition(35, 8);
+            Console.WriteLine("★★★★★: 좌로 이동[A,←]  우로 이동[D,→]  빠르게 내리기[SpaceBar,↓]");
+            Console.SetCursorPosition(35, 10);
+            Console.WriteLine("★단축키★: 속도 업,다운[+,-] 시계방향회전[Z] 반시계방향회전[X]");
+            Console.SetCursorPosition(35, 12);
+            Console.WriteLine("★★★★★: 종료 [ESC]");
+
+            Console.SetCursorPosition(35, 15);
+            Console.WriteLine("*Next Block*");
+            Console.SetCursorPosition(35, 16);
+            Console.WriteLine("*          *");
+            Console.SetCursorPosition(35, 17);
+            Console.WriteLine("*          *");
+            Console.SetCursorPosition(35, 18);
+            Console.WriteLine("*          *");
+            Console.SetCursorPosition(35, 19);
+            Console.WriteLine("*          *");
+            Console.SetCursorPosition(35, 20);
+            Console.WriteLine("*          *");
+            Console.SetCursorPosition(35, 21);
+            Console.WriteLine("************");
+
+            for (int i=0;i<=3;i++)
+            {
+                Console.SetCursorPosition(38, 16+i);
+                for (int j=0;j<=3;j++)
+                {
+                    if(TetrisBlock[nextBlock[1], 0, i, j]==1)
+                        Console.Write("■");
+                    if (TetrisBlock[nextBlock[1], 0, i, j] == 0)
+                        Console.Write("  ");
+                }
+                Console.WriteLine();
+            }
+           
+            /*  Console.SetCursorPosition(30, 10);
+              Console.WriteLine("삭제된 줄의수 :" + DeleteCount);
+              Console.SetCursorPosition(30, 8);
+              Console.WriteLine("게임속도1000=1초 :" + speed);
+              Console.SetCursorPosition(30, 12);
+              Console.WriteLine("onoff 확인 :" + onoff);
+              Console.SetCursorPosition(30, 14);
+              Console.WriteLine("block 확인 :" + PickBlock());
+              Console.SetCursorPosition(30, 16);
+              Console.Write("y좌표 x좌표 :" + m_PosY);
+              Console.WriteLine(" " + m_PosX + centerX);*/
         }
 
 
@@ -834,10 +869,14 @@ namespace Tetris_SeoDongju
     class Mainclass
     {
         static void Main(string[] args)
-        {
+        {   //게임진행
+            Random num = new Random();
+            int pickblock = num.Next(0, 7);
+            int pickblock2 = num.Next(0, 7);
             Console.BackgroundColor = ConsoleColor.White;
-            //게임진행
             Game Tetris = new Game();
+            Tetris.nextBlock[0] = pickblock;
+            Tetris.nextBlock[1] = pickblock2;
             while (true)
             {
                 Thread.Sleep(Tetris.speed);
