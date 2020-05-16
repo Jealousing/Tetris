@@ -902,6 +902,9 @@ namespace Tetris_SeoDongju
                     Console.SetCursorPosition(32, 20);
                     Console.Write("            ■■■■                      ■■■          ■■■■■■■■■■■■■  ■■              ■■");
 
+                    Console.SetCursorPosition(32, 22);
+                    Console.WriteLine("Score :" + DeleteCount * BlockCount);//게임점수 = 삭제된 줄의수 * 지금까지 사용한 블럭갯수.
+
                     Console.SetCursorPosition(50, 22);//게임종료
                     Environment.Exit(0);
                 }
