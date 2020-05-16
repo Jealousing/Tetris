@@ -400,13 +400,13 @@ namespace Tetris_SeoDongju
             {
                 for (int j = 0; j < T_Width; j++)
                 {
-                    if (TetrisBoard[i, j] == 1 )
+                    if (TetrisBoard[i, j] == 1)
                     {
-                        if(TetrisBoard[i + 1, j + x] == 2)
+                        if (TetrisBoard[i + 1, j + x] == 2)
                         {
                             return true;//충돌 !
                         }
-                       
+
                     }
                 }
             }
@@ -471,14 +471,14 @@ namespace Tetris_SeoDongju
 
                 if (info.Key == ConsoleKey.D || info.Key == ConsoleKey.RightArrow)//D키 또는 우측방향키로 우측으로 이동
                 {
-                    
-                    
-                    if(BlockCheckX(1)!=true) //진행반향에 블럭이있는지 확인
+
+
+                    if (BlockCheckX(1) != true) //진행반향에 블럭이있는지 확인
                     {
                         BlockDelete(blocktype, way);//원래 있던 그림을 삭제후
                         m_PosX++;//좌표증가
                     }
-                    
+
 
                     //블럭 타입과 방향에 따른 블럭의 최소 최대좌표 설정.
                     if (blocktype == 0)
@@ -550,11 +550,11 @@ namespace Tetris_SeoDongju
                             case 0:
                             case 2:
                             case 3:
-                                if (m_PosX > -2 + centerX)//맵안에서 활동
+                                if (m_PosX > -3 + centerX)//맵안에서 활동
                                     m_PosX = 4;
                                 break;
                             case 1:
-                                if (m_PosX > -1 + centerX)//맵안에서 활동
+                                if (m_PosX > -2 + centerX)//맵안에서 활동
                                     m_PosX = 5;
                                 break;
 
@@ -567,11 +567,11 @@ namespace Tetris_SeoDongju
                             case 0:
                             case 2:
                             case 3:
-                                if (m_PosX > -2 + centerX)//맵안에서 활동
+                                if (m_PosX > -3 + centerX)//맵안에서 활동
                                     m_PosX = 4;
                                 break;
                             case 1:
-                                if (m_PosX > -1 + centerX)//맵안에서 활동
+                                if (m_PosX > -2 + centerX)//맵안에서 활동
                                     m_PosX = 5;
                                 break;
                         }
@@ -593,7 +593,7 @@ namespace Tetris_SeoDongju
                 }
                 if (info.Key == ConsoleKey.A || info.Key == ConsoleKey.LeftArrow)//A키 또는 좌측방향키로 좌측으로 이동.
                 {
-                    
+
                     if (BlockCheckX(-1) != true)//진행반향에 블럭이있는지 확인
                     {
                         BlockDelete(blocktype, way);//원래 있던 그림을 삭제후
@@ -667,7 +667,7 @@ namespace Tetris_SeoDongju
                                     m_PosX = -3;
                                 break;
                             case 3:
-                                if (m_PosX < 2 - centerX)//맵안에서 활동
+                                if (m_PosX < 3 - centerX)//맵안에서 활동
                                     m_PosX = -4;
                                 break;
                         }
@@ -679,11 +679,11 @@ namespace Tetris_SeoDongju
                             case 0:
                             case 1:
                             case 2:
-                                if (m_PosX < 3 - centerX)//맵안에서 활동
+                                if (m_PosX < 4 - centerX)//맵안에서 활동
                                     m_PosX = -3;
                                 break;
                             case 3:
-                                if (m_PosX < 2 - centerX)//맵안에서 활동
+                                if (m_PosX < 3 - centerX)//맵안에서 활동
                                     m_PosX = -4;
                                 break;
                         }
